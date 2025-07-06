@@ -19,6 +19,39 @@ model User {
   email    String  @unique
   password String
   token    String? @unique
+  isMember Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions Transaction[]
+  sessions     Session[]
 
   @@map("users")
+}
+
+model Transaction {
+  id        String   @unique @default(uuid())
+  userId    Int
+  amount    Float
+  type      String // e.g., "credit", "debit"
+  details   String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("transactions")
+}
+
+model Session {
+  id           String    @unique @default(uuid())
+  userId       Int
+  duration     Int
+  cost         Float
+  CheckedInAt  DateTime  @default(now())
+  CheckedOutAt DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("sessions")
 }
